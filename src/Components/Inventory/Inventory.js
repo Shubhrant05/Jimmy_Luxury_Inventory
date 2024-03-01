@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logout from "../Auth/Logout";
 import SettingsButton from "./SettingButton";
 import { saveAs } from "file-saver";
+import FilterDropdown from "./FilterDropdown";
 
 const Inventory = ({ data, columns }) => {
     // State for managing visible columns and dropdown visibility
@@ -12,8 +13,30 @@ const Inventory = ({ data, columns }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchSKU, setSearchSKU] = useState("");
-    const [sortColumn, setSortColumn] = useState(null);
+    const [sortColumn, setSortColumn] = useState("Available Stock");
     const [sortDirection, setSortDirection] = useState("asc");
+    const [filterOption, setFilterOption] = useState(null);
+    const [filteredDataFromDropdown, setFilteredDataFromDropdown] = useState(data);
+
+    const handleFilter = (filterCriteria, isChecked) => {
+        // Filter data based on the selected criteria
+        if (isChecked) {
+            setFilteredDataFromDropdown(data.filter(item => {
+                if (filterCriteria === "amazon") {
+                    return item["Available Stock on Amazon"] > 0;
+                } else if (filterCriteria === "flipkart") {
+                    return item["Available Stock on Flipkart"] > 0;
+                } else if (filterCriteria === "outOfStock") {
+                    return item["Available Stock"] === 0;
+                }
+                // Add additional filter conditions here if needed
+                return true; // Return true for items that pass all filter conditions
+            }));
+        } else {
+            // Reset filter if checkbox is unchecked
+            setFilteredDataFromDropdown(data);
+        }
+    };
 
     const handleSearchSKU = (e) => {
         setSearchSKU(e.target.value);
@@ -64,7 +87,7 @@ const Inventory = ({ data, columns }) => {
     };
 
     // Filtered and sorted data
-    let filteredData = data;
+    let filteredData = filteredDataFromDropdown;
     if (searchSKU) {
         filteredData = filteredData.filter((item) =>
             item["Product SKU"].trimStart().toLowerCase().includes(searchSKU.toLowerCase())
@@ -120,6 +143,7 @@ const Inventory = ({ data, columns }) => {
                                 />
                             </svg>
                         </button>
+                        <FilterDropdown handleFilter={handleFilter} />
                         <button className="ml-3" onClick={handleDownload}>Download</button>
                     </div>
                     {/* Dropdown menu */}
@@ -180,7 +204,7 @@ const Inventory = ({ data, columns }) => {
                                 <th
                                     key={column}
                                     className="border border-gray-400 p-2 bg-gray-200 text-left text-gray-500 cursor-pointer"
-                                    onClick={column === "Available Stock" ? () => handleSort(column) : () =>{}}
+                                    onClick={column === "Available Stock" ? () => handleSort(column) : () => { }}
                                 >
                                     {column} {sortColumn === column && (
                                         <span>{sortDirection === "asc" ? "▲" : "▼"}</span>
@@ -196,7 +220,7 @@ const Inventory = ({ data, columns }) => {
                     {filteredData.map((row, index) => (
                         <tr key={index} className="bg-transparent hover:bg-gray-100">
                             {/* Render visible columns */}
-                            
+
                             {columns.map((column) => (
                                 console.log("row[column]", row),
                                 visibleColumns[column] && (

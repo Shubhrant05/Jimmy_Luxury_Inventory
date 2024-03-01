@@ -10,7 +10,7 @@ const App = () => {
           "Committed Stock": 5,
           "Available Stock": 15,
           "Onhand stock": 20,
-          "Available Stock on Amazon": 8,
+          "Available Stock on Amazon": 0,
           "Available Stock on Flipkart": 7,
           "Amazon": "true",
           "Flipkart": "false",
@@ -24,7 +24,7 @@ const App = () => {
           "Available Stock": 7,
           "Onhand stock": 10,
           "Available Stock on Amazon": 3,
-          "Available Stock on Flipkart": 4,
+          "Available Stock on Flipkart": 3,
           "Amazon": "true",
           "Flipkart": "true",
           "Tags": ["tag2", "tag3"]
