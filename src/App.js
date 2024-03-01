@@ -1,23 +1,21 @@
-import logo from './logo.svg';
 import './App.css';
-
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
+import Auth from './Components/Auth/Auth'
+import Signup from './Components/Auth/Signup';
+import Inventory from './Components/Inventory/index';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Auth/>} />
+          <Route path="/signup" element={<Signup/>} />
+          <Route path="/dashboard" element={<Inventory/>} />
+          <Route path="/settings" element={<h1>SETTINGS</h1>} />
+          <Route path="*" element={<h1>Not Found</h1>} />
+        </Routes>
+      </Router>
     </div>
   );
 }
