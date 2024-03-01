@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Logout from "../Auth/Logout";
 import SettingsButton from "./SettingButton";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { saveAs } from "file-saver";
+
 const Inventory = ({ data, columns }) => {
     // State for managing visible columns and dropdown visibility
     const [visibleColumns, setVisibleColumns] = useState(columns.reduce((acc, column) => {
@@ -48,12 +49,25 @@ const Inventory = ({ data, columns }) => {
         }
     };
 
+    const handleDownload = () => {
+        // Convert data to CSV format
+        const csvData = [
+            columns.join(","),
+            ...data.map((row) => columns.map((column) => row[column.trimStart()]).join(","))
+        ].join("\n");
+
+        // Create a Blob with the CSV data
+        const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+
+        // Save the Blob as a file using FileSaver.js
+        saveAs(blob, "inventory.csv");
+    };
+
     // Filtered and sorted data
-    console.log("data", data)
     let filteredData = data;
     if (searchSKU) {
         filteredData = filteredData.filter((item) =>
-            item["Product SKU"].toLowerCase().includes(searchSKU.toLowerCase())
+            item["Product SKU"].trimStart().toLowerCase().includes(searchSKU.toLowerCase())
         );
     }
     if (sortColumn) {
@@ -106,7 +120,7 @@ const Inventory = ({ data, columns }) => {
                                 />
                             </svg>
                         </button>
-                        <button className="ml-3">Download</button>
+                        <button className="ml-3" onClick={handleDownload}>Download</button>
                     </div>
                     {/* Dropdown menu */}
                     {isDropdownOpen && (
