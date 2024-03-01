@@ -23,9 +23,9 @@ const Inventory = ({ data, columns }) => {
         if (isChecked) {
             setFilteredDataFromDropdown(data.filter(item => {
                 if (filterCriteria === "amazon") {
-                    return item["Available Stock on Amazon"] > 0;
+                    return item["Available Stock on Amazon"] > 0 && item["Available Stock"] > 0;
                 } else if (filterCriteria === "flipkart") {
-                    return item["Available Stock on Flipkart"] > 0;
+                    return item["Available Stock on Flipkart"] > 0 && item["Available Stock"] > 0;
                 } else if (filterCriteria === "outOfStock") {
                     return item["Available Stock"] === 0;
                 }
@@ -95,12 +95,12 @@ const Inventory = ({ data, columns }) => {
     }
     if (sortColumn) {
         filteredData = filteredData.sort((a, b) => {
-            const aValue = a[sortColumn];
-            const bValue = b[sortColumn];
+            const aValue = parseFloat(a[sortColumn]);
+            const bValue = parseFloat(b[sortColumn]);
             if (sortDirection === "asc") {
-                return aValue.toString()?.localeCompare(bValue.toString());
+                return aValue - bValue;
             } else {
-                return bValue.toString()?.localeCompare(aValue.toString());
+                return bValue - aValue;
             }
         });
     }
