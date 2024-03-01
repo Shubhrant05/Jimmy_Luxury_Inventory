@@ -1,0 +1,13 @@
+th {
+  position: relative;
+}
+
+th:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px; /* Width of the resize handle */
+  height: 100%;
+  cursor: col-resize;
+}

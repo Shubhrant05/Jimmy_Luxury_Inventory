@@ -1,8 +1,12 @@
 import React, { useState } from "react";
+import { Resizable } from "react-resizable";
 import Logout from "../Auth/Logout";
 import SettingsButton from "./SettingButton";
 import { saveAs } from "file-saver";
 import FilterDropdown from "./FilterDropdown";
+import './Inventory.css';
+import SyncSwitch from "./SyncSwitch";
+import InventoryMoveButton from "./InventoryMove";
 
 const Inventory = ({ data, columns }) => {
     // State for managing visible columns and dropdown visibility
@@ -15,8 +19,8 @@ const Inventory = ({ data, columns }) => {
     const [searchSKU, setSearchSKU] = useState("");
     const [sortColumn, setSortColumn] = useState("Available Stock");
     const [sortDirection, setSortDirection] = useState("asc");
-    const [filterOption, setFilterOption] = useState(null);
     const [filteredDataFromDropdown, setFilteredDataFromDropdown] = useState(data);
+    const [columnWidths, setColumnWidths] = useState(columns.map(() => 150)); // Set initial width for each column
 
     const handleFilter = (filterCriteria, isChecked) => {
         // Filter data based on the selected criteria
@@ -86,6 +90,12 @@ const Inventory = ({ data, columns }) => {
         saveAs(blob, "inventory.csv");
     };
 
+    const handleResize = (index) => (e, { size }) => {
+        const newWidths = [...columnWidths];
+        newWidths[index] = size.width;
+        setColumnWidths(newWidths);
+    };
+
     // Filtered and sorted data
     let filteredData = filteredDataFromDropdown;
     if (searchSKU) {
@@ -118,7 +128,7 @@ const Inventory = ({ data, columns }) => {
                     onChange={handleSearchSKU}
                     className="w-1/2 px-4 py-2  border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                 />
-                <div className="relative inline-block text-left">
+                <div className="relative inline-block text-left z-50">
                     <div className="flex">
                         {/* Dropdown button */}
                         <SettingsButton />
@@ -126,7 +136,7 @@ const Inventory = ({ data, columns }) => {
                         <button
                             type="button"
                             onClick={toggleDropdown}
-                            className="inline-flex justify-center w-full rounded-md border border-gray-400 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2  focus:ring-offset-2 focus:ring-offset-gray-100"
+                            className="inline-flex justify-center w-full rounded-md border border-gray-400 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2  focus:ring-offset-2 focus:ring-offset-gray-100 "
                         >
                             Columns
                             <svg
@@ -198,37 +208,54 @@ const Inventory = ({ data, columns }) => {
             <table className="w-full border border-gray-400 bg-white mx-auto">
                 <thead>
                     <tr>
-                        {/* Render visible columns */}
-                        {columns.map((column) => (
+                        {/* Render resizable columns */}
+                        {columns.map((column, index) => (
                             visibleColumns[column] && (
                                 <th
                                     key={column}
                                     className="border border-gray-400 p-2 bg-gray-200 text-left text-gray-500 cursor-pointer"
+                                    style={{ width: `${columnWidths[index]}px` }} // Set column width
                                     onClick={column === "Available Stock" ? () => handleSort(column) : () => { }}
                                 >
-                                    {column} {sortColumn === column && (
-                                        <span>{sortDirection === "asc" ? "▲" : "▼"}</span>
-                                    )}
-
+                                    <Resizable
+                                        width={columnWidths[index]}
+                                        height={0}
+                                        onResize={handleResize(index)}
+                                        draggableOpts={{ enableUserSelectHack: false }}
+                                    >
+                                        <div>
+                                            {column} {sortColumn === column && (
+                                                <span>{sortDirection === "asc" ? "▲" : "▼"}</span>
+                                            )}
+                                        </div>
+                                    </Resizable>
                                 </th>
                             )
                         ))}
+                        <th className="border border-gray-400 p-2 bg-gray-200 text-left text-gray-500 cursor-pointer">Sync</th>
+                        <th className="border border-gray-400 p-2 bg-gray-200 text-left text-gray-500 cursor-pointer">Move</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {/* Render table rows */}
                     {filteredData.map((row, index) => (
                         <tr key={index} className="bg-transparent hover:bg-gray-100">
                             {/* Render visible columns */}
-
                             {columns.map((column) => (
-                                console.log("row[column]", row),
                                 visibleColumns[column] && (
                                     <td key={column} className="p-3 border border-gray-400">
                                         {row[column.trimStart()]}
                                     </td>
+
                                 )
                             ))}
+                            <td className="p-3 border border-gray-400">
+                                <SyncSwitch/>
+                            </td>
+                            <td className="p-3 border border-gray-400">
+                                <InventoryMoveButton/>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

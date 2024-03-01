@@ -18,7 +18,7 @@ const FilterDropdown = ({ handleFilter }) => {
     };
 
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left z-50">
             <button
                 type="button"
                 onClick={toggleDropdown}

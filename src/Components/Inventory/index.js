@@ -138,7 +138,7 @@ const App = () => {
       
 
     const columns = [
-        " Product SKU", "Product Title", "Unavailable Stock", "Committed Stock", "Available Stock", "Onhand stock", "Available Stock on Amazon", "Available Stock on Flipkart", "Amazon", "Flipkart", "Tags"]
+        "Product SKU", "Product Title", "Unavailable Stock", "Committed Stock", "Available Stock", "Onhand stock", "Available Stock on Amazon", "Available Stock on Flipkart", "Amazon", "Flipkart", "Tags"]
 
     return (
         <>
