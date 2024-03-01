@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 const InventoryMoveButton = () => {
     const [confirmationOpen, setConfirmationOpen] = useState(false);
-    const [moveToAmazon, setMoveToAmazon] = useState(false); // State to track if user wants to move to Amazon
-    const [moveToFlipkart, setMoveToFlipkart] = useState(false); // State to track if user wants to move to Flipkart
+    const [moveToAmazon, setMoveToAmazon] = useState(false); 
+    const [moveToFlipkart, setMoveToFlipkart] = useState(false); 
 
     const handleMoveInventory = () => {
         // Check the values of moveToAmazon and moveToFlipkart states to determine where to move the inventory

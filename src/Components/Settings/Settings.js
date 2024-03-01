@@ -5,7 +5,7 @@ import Switches from "./Switches";
 
 const AutoSyncToggle = () => {
     const [autoSync, setAutoSync] = useState(false);
-    const [syncInterval, setSyncInterval] = useState(2); // Default interval value
+    const [syncInterval, setSyncInterval] = useState(2); 
 
     const handleToggle = () => {
         setAutoSync(!autoSync);

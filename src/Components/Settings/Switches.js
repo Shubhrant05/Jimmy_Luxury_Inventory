@@ -4,6 +4,7 @@ const Switches = () => {
     const [amazonSync, setAmazonSync] = useState(true);
     const [flipkartSync, setFlipkartSync] = useState(true);
 
+    // use the states here to sync with Amazon and Flipkart
     return (
         <div className="flex flex-col mb-4">
             <label className="text-lg font-medium mb-2">Amazon Sync:</label>

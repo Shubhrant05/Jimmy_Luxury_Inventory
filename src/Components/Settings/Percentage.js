@@ -4,6 +4,7 @@ const PercentageSelection = () => {
     const [amazonPercentage, setAmazonPercentage] = useState(50);
     const [flipkartPercentage, setFlipkartPercentage] = useState(50);
 
+    //use the Amazon and Flipkart percentages to calculate the inventory split and send it to the server
     const handleAmazonPercentageChange = (value) => {
         setAmazonPercentage(value);
         console.log(`Amazon percentage set to: ${value}`);
