@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InventoryMoveButton = () => {
+const InventoryMoveButton = (props) => {
     const [confirmationOpen, setConfirmationOpen] = useState(false);
     const [moveToAmazon, setMoveToAmazon] = useState(false); 
     const [moveToFlipkart, setMoveToFlipkart] = useState(false); 
@@ -26,8 +26,9 @@ const InventoryMoveButton = () => {
             <button
                 onClick={() => setConfirmationOpen(true)}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                disabled = {props.move !== "not moved"}
             >
-                Move Inventory
+                {props.move === "not moved" ? "Move Inventory" : "Inventory Moved"}
             </button>
             {confirmationOpen && (
                 <div className="absolute top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center">

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-const SyncSwitch = () => {
+const SyncSwitch = (props) => {
   const [syncEnabled, setSyncEnabled] = useState(false);
-
     const toggleSync = () => {
         setSyncEnabled(!syncEnabled);
         !syncEnabled ? console.log("Syncing with Amazon and Flipkart") : console.log("Syncing disabled");
@@ -15,9 +14,11 @@ const SyncSwitch = () => {
       <input
         type="checkbox"
         id="syncToggle"
-        checked={syncEnabled}
+        // checked={syncEnabled}
         onChange={toggleSync}
         className="form-checkbox h-5 w-5 text-indigo-600"
+        
+        checked = {props.sync === "synchronized"}
       />
     </div>
   );

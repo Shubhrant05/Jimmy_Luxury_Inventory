@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Resizable } from "react-resizable";
 import Logout from "../Auth/Logout";
 import SettingsButton from "./SettingButton";
@@ -7,8 +7,10 @@ import FilterDropdown from "./FilterDropdown";
 import './Inventory.css';
 import SyncSwitch from "./SyncSwitch";
 import InventoryMoveButton from "./InventoryMove";
+import axios from "axios";
+import apiUrl from '../../api.config';
 
-const Inventory = ({ data, columns }) => {
+const Inventory = ({ columns }) => {
     // State for managing visible columns and dropdown visibility
     const [visibleColumns, setVisibleColumns] = useState(columns.reduce((acc, column) => {
         acc[column] = true;
@@ -17,27 +19,47 @@ const Inventory = ({ data, columns }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [searchSKU, setSearchSKU] = useState("");
-    const [sortColumn, setSortColumn] = useState("Available Stock");
+    const [sortColumn, setSortColumn] = useState("availableStock");
     const [sortDirection, setSortDirection] = useState("asc");
-    const [filteredDataFromDropdown, setFilteredDataFromDropdown] = useState(data);
+    const [filteredDataFromDropdown, setFilteredDataFromDropdown] = useState([]);
     const [columnWidths, setColumnWidths] = useState(columns.map(() => 150)); // Set initial width for each column
+    const [data, setData] = useState([]);
+    const getData = async () => {
+        try {
+            var res = await axios.get(`${apiUrl}/dish`)
+            if(res.data){
+                setData(res.data)
+                setFilteredDataFromDropdown(res.data)
+            }
+        } catch (error) {
+            console.log("Error occured : ",error)
+        }
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
 
     const handleFilter = (filterCriteria, isChecked) => {
         // Filter data based on the selected criteria
+        
         if (isChecked) {
-            setFilteredDataFromDropdown(data.filter(item => {
+            setFilteredDataFromDropdown(data.filter((item) => {
                 if (filterCriteria === "amazon") {
-                    return item["Available Stock on Amazon"] > 0 && item["Available Stock"] > 0;
+                    return item["availableStockInAmazon"] > 0 && item["availableStock"] > 0;
                 } else if (filterCriteria === "flipkart") {
-                    return item["Available Stock on Flipkart"] > 0 && item["Available Stock"] > 0;
+                    return item["availableStockInFlipkart"] > 0 && item["availableStock"] > 0;
                 } else if (filterCriteria === "outOfStock") {
-                    return item["Available Stock"] === 0;
+                    return item["availableStock"] === 0;
                 }
                 // Add additional filter conditions here if needed
                 return true; // Return true for items that pass all filter conditions
             }));
+            console.log("data2", data)
+            console.log("filteredDataFromDropdown", filteredDataFromDropdown)
         } else {
             // Reset filter if checkbox is unchecked
+            console.log("data1", data)
             setFilteredDataFromDropdown(data);
         }
     };
@@ -96,11 +118,17 @@ const Inventory = ({ data, columns }) => {
         setColumnWidths(newWidths);
     };
 
+    function toCamelCase(str) {
+        return str.toLowerCase().replace(/(?:[-_\s]+)([a-zA-Z0-9])/g, (_, char) => char.toUpperCase());
+      }
     // Filtered and sorted data
+
     let filteredData = filteredDataFromDropdown;
     if (searchSKU) {
-        filteredData = filteredData.filter((item) =>
-            item["Product SKU"].trimStart().toLowerCase().includes(searchSKU.toLowerCase())
+        filteredData = filteredData.filter((item) => {
+            if (item["productSku"].trimStart().toLowerCase().includes(searchSKU.toLowerCase()))
+                return true;
+        }
         );
     }
     if (sortColumn) {
@@ -215,7 +243,7 @@ const Inventory = ({ data, columns }) => {
                                     key={column}
                                     className="border border-gray-400 p-2 bg-gray-200 text-left text-gray-500 cursor-pointer"
                                     style={{ width: `${columnWidths[index]}px` }} // Set column width
-                                    onClick={column === "Available Stock" ? () => handleSort(column) : () => { }}
+                                    onClick={column === "Available Stock" ? () => handleSort(toCamelCase(column)) : () => { }}
                                 >
                                     <Resizable
                                         width={columnWidths[index]}
@@ -242,19 +270,19 @@ const Inventory = ({ data, columns }) => {
                     {filteredData.map((row, index) => (
                         <tr key={index} className="bg-transparent hover:bg-gray-100">
                             {/* Render visible columns */}
-                            {columns.map((column) => (
+                                {columns.map((column) => (
                                 visibleColumns[column] && (
                                     <td key={column} className="p-3 border border-gray-400">
-                                        {row[column.trimStart()]}
+                                        {row[toCamelCase(column.trimStart())]+''}
                                     </td>
 
                                 )
                             ))}
                             <td className="p-3 border border-gray-400">
-                                <SyncSwitch/>
+                                <SyncSwitch sync={row.sync} />
                             </td>
                             <td className="p-3 border border-gray-400">
-                                <InventoryMoveButton/>
+                                <InventoryMoveButton move={row.move} />
                             </td>
                         </tr>
                     ))}

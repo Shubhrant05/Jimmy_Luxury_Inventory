@@ -5,8 +5,7 @@ const Logout = () => {
 
     const handleLogout = () => {
         //Add code to logout user
-        localStorage.removeItem('username');
-        localStorage.removeItem('password');
+        document.cookie = 'jwt=; Max-Age=0; path=/; secure; SameSite=Strict';
         navigate('/');
     }
     return (

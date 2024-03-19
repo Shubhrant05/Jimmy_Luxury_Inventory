@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
+import apiUrl from '../../api.config';
+import axios from 'axios';
 
 const Signup = () => {
     // State variables to hold form data
     const [formData, setFormData] = useState({
-        username: '',
+        name: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        age: 18,
+        email: '',
     });
 
     // State variable to hold validation error
@@ -31,15 +35,19 @@ const Signup = () => {
             toast.error('Passwords do not match');
             return;
         }
-        if (formData.username === '' || formData.password === '' || formData.confirmPassword === '') {
+        if (formData.name === '' || formData.password === '' || formData.confirmPassword === '') {
             setError('Please fill in all fields');
             toast.error('Please fill in all fields');
             return;
         }
         // Reset error if no validation issue
         setError('');
-        localStorage.setItem('username', formData.username);
-        localStorage.setItem('password', formData.password);
+        try {
+            axios.post(`${apiUrl}/rakeshis/register`, formData)
+        } catch (error) {
+            console.log('Error occurred: ', error);
+            toast.error('Retry!!');
+        }
         console.log(formData);
         toast.success('Sign up successful');
     };
@@ -49,16 +57,58 @@ const Signup = () => {
             <div className="w-1/3  mx-auto">
                 <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                            Username
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                            Name
                         </label>
                         <input
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="username"
+                            id="name"
                             type="text"
-                            placeholder="Username"
-                            name="username"
-                            value={formData.username}
+                            placeholder="Name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="email"
+                            type="email"
+                            placeholder="Email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="age">
+                            Age
+                        </label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="age"
+                            type="number"
+                            placeholder="Age"
+                            name="age"
+                            value={formData.age}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mobileNumber">
+                            Mobile Number
+                        </label>
+                        <input
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="mobileNumber"
+                            type="text"
+                            placeholder="Mobile Number"
+                            name="mobileNumber"
+                            value={formData.mobileNumber}
                             onChange={handleChange}
                         />
                     </div>
