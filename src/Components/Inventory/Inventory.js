@@ -32,7 +32,7 @@ const Inventory = ({ columns }) => {
                 setFilteredDataFromDropdown(res.data)
             }
         } catch (error) {
-            console.log("Error occured : ",error)
+            console.error("Error occured : ",error)
         }
     }
 
@@ -55,11 +55,7 @@ const Inventory = ({ columns }) => {
                 // Add additional filter conditions here if needed
                 return true; // Return true for items that pass all filter conditions
             }));
-            console.log("data2", data)
-            console.log("filteredDataFromDropdown", filteredDataFromDropdown)
         } else {
-            // Reset filter if checkbox is unchecked
-            console.log("data1", data)
             setFilteredDataFromDropdown(data);
         }
     };

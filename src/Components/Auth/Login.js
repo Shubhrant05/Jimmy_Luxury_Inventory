@@ -17,7 +17,6 @@ const Login = (props) => {
     const submitData = async () => {
         try {
             let res = await axios.post(`${apiUrl}/rakeshis/login`, formData)
-            console.log(res.data)
             if (res.data.message === "Login successfully") {
                 document.cookie = `jwt=${res.data.token}; path=/; secure; SameSite=Strict`;
                 toast.success("User signed-in successfully")
@@ -48,8 +47,8 @@ const Login = (props) => {
             toast.error('Please fill in all fields');
             return;
         }
-        // LOGGED DATA TO BE SHOWN IN CONSOLE FOR DEBUGGING PURPOSES
-        console.log(formData);
+        navigate("/dashboard")
+        
     };
 
     return (

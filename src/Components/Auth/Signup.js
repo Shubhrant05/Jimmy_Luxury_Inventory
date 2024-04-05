@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import apiUrl from '../../api.config';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
+    const navigate = useNavigate();
     // State variables to hold form data
     const [formData, setFormData] = useState({
         name: '',
@@ -43,13 +45,20 @@ const Signup = () => {
         // Reset error if no validation issue
         setError('');
         try {
-            axios.post(`${apiUrl}/rakeshis/register`, formData)
+            axios.post(`${apiUrl}/rakeshis/register`, formData).then((res) => {
+                if (res.data.message === 'User registered successfully') {
+                    toast.success('Sign up successful');
+                    navigate('/');
+                } else {
+                    toast.error('Retry!!');
+                }
+            });
         } catch (error) {
-            console.log('Error occurred: ', error);
+            console.error('Error occurred: ', error);
             toast.error('Retry!!');
         }
-        console.log(formData);
         toast.success('Sign up successful');
+        navigate('/')
     };
 
     return (
